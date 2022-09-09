@@ -1,9 +1,10 @@
 # Plan:
 
-- Clone repository, install cucumber and playwright
+- Clone repository, install cucumber and playwright 
+	- `git clone https://github.com/ScharfViktor/e2e-workshop.git`
  
 - creating feature using gherkin https://cucumber.io/docs/gherkin/reference/
-	- use table (join tests)
+	- use table Scenario Outline (join tests)
 
 - creating step definition (playwright)
 	- locators https://playwright.dev/docs/locators#creating-locators How choose: https://www.w3schools.com/cssref/css_selectors.asp
@@ -42,7 +43,7 @@
 	`"@cucumber/cucumber": "^7.3.1",`
 	`"@cucumber/pretty-formatter": "^1.0.0",`
     	`"@playwright/test": "^1.25.1",`
-    	`"playwright": "^1.25.1"``
+    	`"playwright": "^1.25.1"`
 
 
 2. **Create config file conf.js**
@@ -118,7 +119,7 @@ After(async function () {
 	and add const url. Use https://localhost:9200 if you have running ocis localy
  	`const url = 'https://localhost:9200'`
 
-9. ** add first step** to test body
+9. **add first step** to test body
 	`wait page.goto(url)`
 
 10. **run test again**:
