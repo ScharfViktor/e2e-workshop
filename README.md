@@ -1,33 +1,26 @@
-# Plan:
+# Presentation:
 
 - Introduction to web testing: https://docs.google.com/presentation/d/1P12z0zLeARcCBn_d_A67rOlcAjlzW8LIHIK6LQtlMKs 
 
 - Clone repository, install cucumber and playwright 
 	- `git clone https://github.com/ScharfViktor/e2e-workshop.git`
  
-- creating feature using gherkin https://cucumber.io/docs/gherkin/reference/
-	- use table Scenario Outline (join tests)
 
-- creating step definition (playwright)
-	- locators https://playwright.dev/docs/locators#creating-locators How choose: https://www.w3schools.com/cssref/css_selectors.asp
-	- action https://playwright.dev/docs/api/class-page
-	- check api response after action https://playwright.dev/docs/api/class-page#page-wait-for-response
-	- assertion https://playwright.dev/docs/test-assertions
+# What we are going to do:
 
-- run test in different browsers https://playwright.dev/docs/test-configuration#multiple-browsers
-
-- try to fix failed test
-	- find problem. use tracing https://playwright.dev/docs/trace-viewer
-	- debug https://playwright.dev/docs/debug#pagepause
-
-- Configuration
-	- slow_mo
-	- try emulation https://playwright.dev/docs/test-configuration#emulation
+- set up playwright and cucumber
+- write test using gherkin syntax
+- implement step definition using playwright
+- using test generator
+- checks the api response in the e2e test for more confidence
+- run test in different browsers
+- configuration
+- debug test
+- tracing
 
 
 
-
-# Precondition: node.js must be installed
+## Precondition: node.js must be installed
 
 # Steps:
 
@@ -44,8 +37,8 @@
 		
 	`"@cucumber/cucumber": "^7.3.1",`
 	`"@cucumber/pretty-formatter": "^1.0.0",`
-    	`"@playwright/test": "^1.25.1",`
-    	`"playwright": "^1.25.1"`
+    	`"@playwright/test": "^1.27.1",`
+    	`"playwright": "^1.27.1"`
 
 
 2. **Create config file conf.js**
@@ -84,15 +77,16 @@ After(async function () {
 
 3. **create feature file**: tests/feature/login.feature 
 	create a login test using the gherkin syntax
+	see how do it: https://cucumber.io/docs/gherkin/reference/
 
-4. **create empty context file ** for inplementation of the test tests/stepDefinition/context.js
+4. **create empty context file** for inplementation of the test tests/stepDefinition/context.js
 
 5. **create run command in package.json** 
 	add to "scripts"- section
     	`"test:e2e": "cucumber-js --require conf.js --require tests/stepDefinition/*.js --format @cucumber/pretty-formatter"`
   	
 6. **try to run command in terminal**:
-	`yarn test:e2e tests/feature/login.feature`
+	`pnpm test:e2e tests/feature/login.feature`
 
 	as result we should have in terminal:
 	```
@@ -118,11 +112,11 @@ After(async function () {
 	`const {When} = require('@cucumber/cucumber')`
 	`const {expect} = require('@playwright/test')`
 	
-	and add const url. Use https://localhost:9200 if you have running ocis localy
- 	`const url = 'https://localhost:9200'`
+	and add const url. Use https://localhost:9200 if you have running ocis localy or use test instance
+ 	`const url = 'https://ocis.ocis-traefik.released.owncloud.works'`
 
 9. **add first step** to test body
-	`wait page.goto(url)`
+	`await page.goto(url)`
 
 10. **run test again**:
 
@@ -133,3 +127,34 @@ After(async function () {
 
 11. **try to use test generator**:
 	in console: `npx playwright codegen playwright.dev`
+	you can copy paste generated code from `Playwright Inspector` to contex.js or create a test yourself 
+	use: 
+		- locators https://playwright.dev/docs/locators#creating-locators How choose: https://www.w3schools.com/cssref/css_selectors.asp
+		- action https://playwright.dev/docs/api/class-page
+		- assertion https://playwright.dev/docs/test-assertions
+
+12. **create new test**: user creates folder and checks api response after creating folder
+	-  check api response after action https://playwright.dev/docs/api/class-page#page-wait-for-response
+
+13. **try to run test in different browsers** 
+	instead of `chromium` in `conf.js` use `webkit` or `firefox`. Playwrigth launches safari even if you use linux or windows
+
+14. **configuration** 
+
+15. **debug and tracing**
+	debug: https://playwright.dev/docs/debug#pagepause
+	tracing: https://playwright.dev/docs/trace-viewer
+	
+	- Set the trace path dir in conf: 
+	```
+	global.browser = await chromium.launch({
+        headless: false,
+        tracesDir: 'tests/trace' 
+   	});
+	```
+	- in section `Before` in conf after `browser.newContext()`, enable tracing start
+	`await context.tracing.start({ screenshots: true, snapshots: true, sources: true})`
+	- in section `After` in conf before `await global.page.close()`, disable tracing
+	`await context.tracing.stop({ path: 'tests/trace/trace.zip' });`
+	- run test
+	- open https://trace.playwright.dev/ and select `zip` file from `tests/trace/trace.zip`
