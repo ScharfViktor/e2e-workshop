@@ -124,6 +124,7 @@ You can run all defined scripts with `npm` by their keys from within the context
 - Copy & paste the proposed step definition from the terminal output (see 6.) to `tests/stepDefinition/context.js`
 - Start implementation of the step as follows:
   - replace `function` with `async function`
+  - delete `return 'pending'` line
   - add `await page.goto(url)` to visit oCIS instance (redirects to login page)
 
 ## 8. Run test again
