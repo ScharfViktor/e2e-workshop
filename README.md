@@ -140,9 +140,10 @@ After(async function () {
 	instead of `chromium` in `conf.js` use `webkit` or `firefox`. Playwrigth launches safari even if you use linux or windows
 
 14. **configuration** 
+	in `conf.js` change `headless: true` to not show the browser
+	add `slowMo: 2000` each step of the test will be slower
 
 15. **debug and tracing**
-	debug: https://playwright.dev/docs/debug#pagepause
 	tracing: https://playwright.dev/docs/trace-viewer
 	
 	- Set the trace path dir in conf: 
@@ -158,3 +159,14 @@ After(async function () {
 	`await context.tracing.stop({ path: 'tests/trace/trace.zip' });`
 	- run test
 	- open https://trace.playwright.dev/ and select `zip` file from `tests/trace/trace.zip`
+
+	debug: https://playwright.dev/docs/debug#pagepause
+	- Turn on the browser: `headless: false`
+	- put await page.pause() to `context.js` after `await page.goto(url)` and run test 
+	- you should see Playwright inspector. you can go through all the steps of the test
+	
+	
+# Ending: 
+	- We finish our first introduction to e2e testing with playwrigth
+	- The next step will be a deeper dive to testing from the web repo and give an overview over existing steps
+	
