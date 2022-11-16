@@ -162,7 +162,7 @@ You can run all defined scripts with `npm` by their keys from within the context
 	```
 	- in section `Before` in `conf.js` after `browser.newContext()`, start tracing
 	`await context.tracing.start({ screenshots: true, snapshots: true, sources: true})`
-	- in section `After` in conf before `await global.page.close()`, finalize tracing
+	- in section `After` in `conf.js` before `await global.page.close()`, finalize tracing
 	`await context.tracing.stop({ path: 'tests/trace/trace.zip' });`
 	- run test again
 	- open https://trace.playwright.dev/ and select `zip` file from `tests/trace/trace.zip`
