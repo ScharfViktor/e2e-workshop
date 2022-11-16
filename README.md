@@ -8,41 +8,42 @@
 
 # What we are going to do:
 
-- set up playwright and cucumber
-- write test using gherkin syntax
-- implement step definition using playwright
-- using test generator
-- checks the api response in the e2e test for more confidence
-- run test in different browsers
-- configuration
-- debug test
-- tracing
-
-
+- today: introduction to end-to-end (e2e) testing with playwright
+  - set up playwright and cucumber
+  - write test using gherkin syntax
+  - implement step definition using playwright
+  - using test generator
+  - check api responses in the e2e test for more confidence
+  - run test in different browsers
+  - configuration
+  - debug tests
+  - tracing
+- next time: get familiar with e2e tests in github.com/owncloud/web
 
 ## Precondition: node.js must be installed
 
 # Steps:
 
-1. **Set up** 
-
+## 1. Setup
 - set up playwright
-	- `npm i -D @playwright/test`
-	- `npm i -D playwright` 
+	- `npm i -D @playwright/test playwright`
 
 - set up cucumber
 	- `npm i -D @cucumber/cucumber@7.3.1 @cucumber/pretty-formatter`
 
-- after that check your package.json: 
-		
-	`"@cucumber/cucumber": "^7.3.1",`
-	`"@cucumber/pretty-formatter": "^1.0.0",`
-    	`"@playwright/test": "^1.27.1",`
-    	`"playwright": "^1.27.1"`
+- after that check your package.json, it should contain:
+	```json
+    "devDependencies": {
+      "@cucumber/cucumber": "^7.3.1",
+      "@cucumber/pretty-formatter": "^1.0.0",
+      "@playwright/test": "^1.27.1",
+      "playwright": "^1.27.1"
+    }
+    ```
 
-
-2. **Create config file conf.js**
-```
+## 2. Create config file `conf.js`
+Copy & paste following content into the file `conf.js`
+```js
 const { Before, BeforeAll, AfterAll, After, setDefaultTimeout } = require("@cucumber/cucumber");
 const { chromium } = require("playwright"); 
 
@@ -74,99 +75,106 @@ After(async function () {
 });
 ```
 
+## 3. Create script in package.json
+Copy & paste the following string into the `scripts` section of your `package.json`:
 
-3. **create feature file**: tests/feature/login.feature 
-	create a login test using the gherkin syntax
-	see how do it: https://cucumber.io/docs/gherkin/reference/
+```json
+"scripts": {
+  "test:e2e": "cucumber-js --require conf.js --require tests/stepDefinition/*.js --format @cucumber/pretty-formatter"
+}
+```
 
-4. **create empty context file** for inplementation of the test tests/stepDefinition/context.js
+You can run all defined scripts with `npm` by their keys from within the context of your project later on.
 
-5. **create run command in package.json** 
-	add to "scripts"- section
-    	`"test:e2e": "cucumber-js --require conf.js --require tests/stepDefinition/*.js --format @cucumber/pretty-formatter"`
-  	
-6. **try to run command in terminal**:
-	`pnpm test:e2e tests/feature/login.feature`
+## 4. Create feature file
+- Create an empty file `tests/feature/login.feature`
+- Gherkin reference: https://cucumber.io/docs/gherkin/reference/
+- Copy & paste the following content
+	```gherkin
+    Feature: Login
+      Logging in and stuff...
 
-	as result we should have in terminal:
+      Scenario: log in
+        To fill out: try to write a step which logs in user "marie" with password "radioactivity"
+    ```
+- Try to fill out the missing line in Gherkin :-)
+
+## 5. Create context file for step definitions
+- Create an empty file `tests/stepDefinition/context.js`
+- Copy and paste the following content
+	```js
+    const {When} = require('@cucumber/cucumber')
+    const {expect} = require('@playwright/test')
+ 
+    const url = 'https://ocis.ocis-traefik.released.owncloud.works'
+	```
+
+## 6. Run test with the `test:e2e` script
+- run command `npm run test:e2e tests/feature/login.feature` in your terminal
+- result should be similar to:
+	
 	```
 	1) Scenario: log in # tests/feature/login.feature:5
    	✔ Before # conf.js:23
-   	? When user with username "Marie" and password "radioactivity" logs in
+   	? When ... (whatever you defined as step in the feature file)
        Undefined. Implement with the following snippet:
-
-         When('user with username {string} and password {string} logs in', function (string, string2) {
-           // Write code here that turns the phrase above into concrete actions
-           return 'pending';
-         });
 	```
 
-7. **creating step definition (playwright)**
-	copy paste to tests/stepDefinition/context.js (function should be async function)
-		```When('user logs in with username {string} and password {string}', async function (string, string2) {
-           	// Write code here that turns the phrase above into concrete actions
-           	return 'pending';
-         	});```
+## 7. Creating a step definition (playwright)
+- Copy & paste the proposed step definition from the terminal output (see 6.) to `tests/stepDefinition/context.js`
+- Start implementation of the step as follows:
+  - replace `function` with `async function`
+  - add `await page.goto(url)` to visit oCIS instance (redirects to login page)
 
-8. **require cucumber and playwright in context.js**:
-	`const {When} = require('@cucumber/cucumber')`
-	`const {expect} = require('@playwright/test')`
-	
-	and add const url. Use https://localhost:9200 if you have running ocis localy or use test instance
- 	`const url = 'https://ocis.ocis-traefik.released.owncloud.works'`
+## 8. Run test again
+- if you use localhost oCIS and have error: `page.goto: net::ERR_CERT_AUTHORITY_INVALID at https://localhost:9200/`,
+	ignore certificate warning via additional `conf.js` line: 
+    `global.context = await global.browser.newContext({ ignoreHTTPSErrors: true });`
+- expected: test passed :-D
 
-9. **add first step** to test body
-	`await page.goto(url)`
+## 9. Use test generator
+- in terminal: `npx playwright codegen https://ocis.ocis-traefik.released.owncloud.works`
+- you can copy paste generated code from `Playwright Inspector` window to `context.js` 
+- or create a test yourself   
+	use:  
+  - locators https://playwright.dev/docs/locators#creating-locators How choose: https://www.w3schools.com/cssref/css_selectors.asp
+  - actions https://playwright.dev/docs/api/class-page
+  - assertions https://playwright.dev/docs/test-assertions
 
-10. **run test again**:
+## 10. Run test in different browsers 
+- instead of `chromium` in `conf.js` use `webkit` or `firefox`
+- Playwright launches safari even if you use linux or windows :-)
 
-	if you have error: `page.goto: net::ERR_CERT_AUTHORITY_INVALID at https://localhost:9200/`
-		add ignore to conf.js: `global.context = await global.browser.newContext({ ignoreHTTPSErrors: true });`
+## 11. Configuration
+- in `conf.js`
+  - change `headless: true` to not show the browser
+  - add `slowMo: 2000` each step of the test will be slower by 2000ms
 
-	expected: test passed
-
-11. **try to use test generator**:
-	in console: `npx playwright codegen playwright.dev`
-	you can copy paste generated code from `Playwright Inspector` to contex.js or create a test yourself 
-	use: 
-		- locators https://playwright.dev/docs/locators#creating-locators How choose: https://www.w3schools.com/cssref/css_selectors.asp
-		- action https://playwright.dev/docs/api/class-page
-		- assertion https://playwright.dev/docs/test-assertions
-
-12. **create new test**: user creates folder and checks api response after creating folder
-	-  check api response after action https://playwright.dev/docs/api/class-page#page-wait-for-response
-
-13. **try to run test in different browsers** 
-	instead of `chromium` in `conf.js` use `webkit` or `firefox`. Playwrigth launches safari even if you use linux or windows
-
-14. **configuration** 
-	in `conf.js` change `headless: true` to not show the browser
-	add `slowMo: 2000` each step of the test will be slower
-
-15. **debug and tracing**
-	tracing: https://playwright.dev/docs/trace-viewer
-	
+## 12. Debugging and tracing
+- tracing: https://playwright.dev/docs/trace-viewer
 	- Set the trace path dir in conf: 
-	```
+	```js
 	global.browser = await chromium.launch({
         headless: false,
         tracesDir: 'tests/trace' 
    	});
 	```
-	- in section `Before` in conf after `browser.newContext()`, enable tracing start
+	- in section `Before` in `conf.js` after `browser.newContext()`, start tracing
 	`await context.tracing.start({ screenshots: true, snapshots: true, sources: true})`
-	- in section `After` in conf before `await global.page.close()`, disable tracing
+	- in section `After` in conf before `await global.page.close()`, finalize tracing
 	`await context.tracing.stop({ path: 'tests/trace/trace.zip' });`
-	- run test
+	- run test again
 	- open https://trace.playwright.dev/ and select `zip` file from `tests/trace/trace.zip`
-
-	debug: https://playwright.dev/docs/debug#pagepause
-	- Turn on the browser: `headless: false`
-	- put await page.pause() to `context.js` after `await page.goto(url)` and run test 
+- debug: https://playwright.dev/docs/debug#pagepause
+	- Turn on the browser again: `headless: false`
+	- put await page.pause() to `context.js` after `await page.goto(url)` and run test
 	- you should see Playwright inspector. you can go through all the steps of the test
-	
-	
-# Ending: 
-	- We finish our first introduction to e2e testing with playwrigth
-	- The next step will be a deeper dive to testing from the web repo and give an overview over existing steps
-	
+
+
+# Ending:
+ 	- We finish our first introduction to e2e testing with playwright
+ 	- The next step will be a deeper dive to testing from the web repo and give an overview over existing steps (reusable)
+
+# Bonus: Create new test
+- Scenario: user creates folder and checks api response after creating folder
+- Hint: check api response after action https://playwright.dev/docs/api/class-page#page-wait-for-response
