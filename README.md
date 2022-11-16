@@ -1,6 +1,6 @@
 # Presentation:
 
-- Introduction to web testing: https://docs.google.com/presentation/d/1P12z0zLeARcCBn_d_A67rOlcAjlzW8LIHIK6LQtlMKs 
+- Introduction to web testing: https://cloud.owncloud.com/index.php/s/BX8KvgsfDVKv6K0 
 
 - Clone repository, install cucumber and playwright 
 	- `git clone https://github.com/ScharfViktor/e2e-workshop.git`
