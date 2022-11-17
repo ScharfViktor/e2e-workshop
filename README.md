@@ -135,7 +135,8 @@ You can run all defined scripts with `npm` by their keys from within the context
 
 ## 9. Use test generator
 - in terminal: `npx playwright codegen https://ocis.ocis-traefik.released.owncloud.works`
-- you can copy paste generated code from `Playwright Inspector` window to `context.js` 
+- you can copy paste generated code from `Playwright Inspector` window to `context.js`
+- run test. Expected: test passed :-D
 
 ---------
 
@@ -173,6 +174,10 @@ Go to the main room please!
 	`await context.tracing.stop({ path: 'tests/trace/trace.zip' });`
 	- run test again
 	- open https://trace.playwright.dev/ and select `zip` file from `tests/trace/trace.zip`
+	- tracing provide a rich information. You can swich between `network` `console` `source`
+
+<img width="1342" alt="Screenshot 2022-11-17 at 12 25 49" src="https://user-images.githubusercontent.com/84779829/202435943-cb868301-e15b-4e4d-9b61-fdd0d67cb7a7.png">
+
 - debug: https://playwright.dev/docs/debug#pagepause
 	- Turn on the browser again: `headless: false`
 	- put await page.pause() to `context.js` after `await page.goto(url)` and run test
