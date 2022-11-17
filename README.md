@@ -136,6 +136,13 @@ You can run all defined scripts with `npm` by their keys from within the context
 ## 9. Use test generator
 - in terminal: `npx playwright codegen https://ocis.ocis-traefik.released.owncloud.works`
 - you can copy paste generated code from `Playwright Inspector` window to `context.js` 
+
+---------
+
+Go to the main room please!
+
+---------
+
 - or create a test yourself   
 	use:  
   - locators https://playwright.dev/docs/locators#creating-locators How choose: https://www.w3schools.com/cssref/css_selectors.asp
@@ -175,6 +182,12 @@ You can run all defined scripts with `npm` by their keys from within the context
 # Ending:
  	- We finish our first introduction to e2e testing with playwright
  	- The next step will be a deeper dive to testing from the web repo and give an overview over existing steps (reusable)
+
+---------
+
+Go to the main room please!
+
+---------
 
 # Bonus: Create new test
 - Scenario: user creates folder and checks api response after creating folder
