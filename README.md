@@ -146,7 +146,7 @@ Go to the main room please!
 
 - or create a test yourself   
 	use:  
-  - locators https://playwright.dev/docs/locators#creating-locators How choose: https://www.w3schools.com/cssref/css_selectors.asp
+  - locators https://playwright.dev/docs/selectors How choose: https://www.w3schools.com/cssref/css_selectors.asp
   - actions https://playwright.dev/docs/api/class-page
   - assertions https://playwright.dev/docs/test-assertions
 
